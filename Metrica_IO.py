@@ -29,8 +29,8 @@ def read_event_data(DATADIR,game_id):
     read_event_data(DATADIR,game_id):
     read Metrica event data  for game_id and return as a DataFrame
     '''
-    eventfile = '/Sample_Game_%d/Sample_Game_%d_RawEventsData.csv' % (game_id,game_id) # filename
-    events = pd.read_csv('{}/{}'.format(DATADIR, eventfile)) # read data
+    eventfile = 'Sample_Game_%d_RawEventsData.csv' % (game_id) # filename
+    events = pd.read_csv('{}{}'.format(DATADIR, eventfile)) # read data
     return events
 
 def tracking_data(DATADIR,game_id,teamname):
@@ -39,9 +39,9 @@ def tracking_data(DATADIR,game_id,teamname):
     read Metrica tracking data for game_id and return as a DataFrame. 
     teamname is the name of the team in the filename. For the sample data this is either 'Home' or 'Away'.
     '''
-    teamfile = '/Sample_Game_%d/Sample_Game_%d_RawTrackingData_%s_Team.csv' % (game_id,game_id,teamname)
+    teamfile = 'Sample_Game_%d_RawTrackingData_%s_Team.csv' % (game_id,teamname)
     # First:  deal with file headers so that we can get the player names correct
-    csvfile =  open('{}/{}'.format(DATADIR, teamfile), 'r') # create a csv file reader
+    csvfile =  open('{}{}'.format(DATADIR, teamfile), 'r') # create a csv file reader
     reader = csv.reader(csvfile) 
     teamnamefull = next(reader)[3].lower()
     print("Reading team: %s" % teamnamefull)
