@@ -12,9 +12,12 @@ Data can be found at: https://github.com/metrica-sports/sample-data
 
 import Metrica_IO as mio
 import Metrica_Viz as mviz
+import os
 
 # set up initial path to data
-DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
+script_dir = os.path.dirname(__file__)
+DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
+# DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
 game_id = 2 # let's look at sample match 2
 
 # read in the event data
