@@ -116,7 +116,7 @@ def pickling_data():
     itersV = itersV.astype(int)
     pass 
 
-def ext_event_frams_players( events = None, team = None,evt_type = None, evt_sbtyp =  None, rdm_2nd_plr_flg = True):
+def ext_event_frams_players( events = None, team = None,evt_type = None, evt_sbtyp =  None, rdm_2nd_plr_flg = False):
     """
     Given an event, it extracts the event start and end frames, and the names of the player/plyres who are involved in the event  
     Inputs: 
@@ -231,7 +231,7 @@ for i,k in enumerate(away_pass_inter_frames):#enumerate(away_lost_inter_frames):
     ip1 = np.random.randint(100)
     ip2 = np.random.randint(100)
     from_player = pass_confg_players[i][0]
-    to_player = pass_confg_players[ip2][1]
+    to_player = pass_confg_players[i][1] # If you want to randomize the receptor player (create a negative example), then set i to ip2
 
     #Extracting the event trajectories for player-to-player-ball trajectories: 
     plt_inst = True
