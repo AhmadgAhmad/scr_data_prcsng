@@ -36,7 +36,7 @@ def calc_player_velocities_heading(team, smoothing=True, filter_='Savitzky-Golay
     team = remove_player_velocities(team)
     
     # Get the player ids
-    player_ids = np.unique( [ c[:-2] for c in team.columns if c[:4] in ['Home','Away'] ] )
+    player_ids = np.unique( [ c[:-2] for c in team.columns if c[:4] in ['Home','Away','ball'] ] )
 
     # Calculate the timestep from one frame to the next. Should always be 0.04 within the same half
     dt = team['Time [s]'].diff()
