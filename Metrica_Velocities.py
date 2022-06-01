@@ -13,10 +13,10 @@ Data can be found at: https://github.com/metrica-sports/sample-data
 import numpy as np
 import scipy.signal as signal
 
-def calc_player_velocities(team, smoothing=True, filter_='Savitzky-Golay', window=7, polyorder=1, maxspeed = 12):
-    """ calc_player_velocities( tracking_data )
+def calc_player_velocities_heading(team, smoothing=True, filter_='Savitzky-Golay', window=7, polyorder=1, maxspeed = 12):
+    """ calc_player_velocities_heading( tracking_data )
     
-    Calculate player velocities in x & y direciton, and total player speed at each timestamp of the tracking data
+    Calculate player velocities in x & y direciton, the heading of the player, and total player speed at each timestamp of the tracking data
     
     Parameters
     -----------
@@ -74,12 +74,14 @@ def calc_player_velocities(team, smoothing=True, filter_='Savitzky-Golay', windo
                 vy.loc[second_half_idx:] = np.convolve( vy.loc[second_half_idx:] , ma_window, mode='same' ) 
                 
         
-        # put player speed in x,y direction, and total speed back in the data frame
+        # put player speed in x,y direction, total speed, and player heading back in the data frame
         team[player + "_vx"] = vx
         team[player + "_vy"] = vy
         team[player + "_speed"] = np.sqrt( vx**2 + vy**2 )
+        team[player + "_heading"] = np.arctan2( vy , vx ) 
 
     return team
+
 
 def remove_player_velocities(team):
     # remove player velocoties and acceleeration measures that are already in the 'team' dataframe
