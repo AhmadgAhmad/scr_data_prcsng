@@ -1,3 +1,12 @@
+"""
+@ Ahmad Ahmad, 
+
+
+"""
+
+
+
+
 from sympy import false
 from Metrica_IO import *
 from Metrica_EPV import *
@@ -8,17 +17,13 @@ import pickle
 import os
 import math
 
-game_id = 2 # Available games in cvs formate games 1 and 2. Game 3 in json format
-
-script_dir = os.path.dirname(__file__)
-DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
 
 #Extracting teams and ball trajectories: 
 #------------------------------------------
 # Home Team: 
 def ext_teams_Traj(tracking_home, tracking_away ,s_ind,e_ind, ptclr_payers_list = None, plt_inst = False,ext_home_flg = True, ext_away_flg = True):
     """
-    Ruturns the trajectories of the home and away teams, respectively.
+    Returns the trajectories of the home and away teams, respectively.
     Inputs:   
      - s_ind: index of the starting frame, 
      - e_ind: index of the ending frame, 
@@ -112,7 +117,7 @@ def pickling_data():
         a = 1
     itersV = np.linspace(initIter, len(costToCome_list)+initIter, len(costToCome_list))
     itersV = itersV.astype(int)
-    pass 
+    
 
 def ext_event_frams_players( events = None, team = None,evt_type = None, evt_sbtyp =  None, rdm_2nd_plr_flg = False):
     """
@@ -161,89 +166,98 @@ def ext_event_frams_players( events = None, team = None,evt_type = None, evt_sbt
     return evt_strt_end_frms, team_From_To_players
     
 
+def main():
+    #Extract the tracking data and plot the specified time window: 
+    # tracking_home, tracking_away, home_trajs, away_trajs  = ext_teams_Traj(s_ind = 10,e_ind = 2000,plt_inst=True)
 
-#Extract the tracking data and plot the specified time window: 
-# tracking_home, tracking_away, home_trajs, away_trajs  = ext_teams_Traj(s_ind = 10,e_ind = 2000,plt_inst=True)
+    # Extract interseptions data traces: 
+    # Each team will have 2 types of interseption, (i) Recovery interspetion (ii) Losing the ball interseption
+    # -----------------------------------------------
+    #Extracting the trajectories from the game file: 
+    # Home team
+    game_id = 2 # Available games in cvs formate games 1 and 2. Game 3 in json format
 
-# Extract interseptions data traces: 
-# Each team will have 2 types of interseption, (i) Recovery interspetion (ii) Losing the ball interseption
-# -----------------------------------------------
-#Extracting the trajectories from the game file: 
-# Home team
-tracking_home = mio.tracking_data(DATADIR,game_id,'Home')
-tracking_home = mio.to_metric_coordinates(tracking_home)
-# Away team: 
-tracking_away = mio.tracking_data(DATADIR,game_id,'Away')
-tracking_away = mio.to_metric_coordinates(tracking_away)
-
-    
-
-events = mio.read_event_data(DATADIR,game_id)
-events = mio.to_metric_coordinates(events)
-home_lost_inter_frames, home_From_To_players  = \
-    ext_event_frams_players( events = events, team = 'Home',evt_type = 'BALL LOST', evt_sbtyp =  'INTERCEPTION')
-home_lost_from_player = home_From_To_players[0]
-
-away_rec_inter_frames, away_rec_From_To_players  = \
-    ext_event_frams_players( events = events, team = 'Away',evt_type = 'RECOVERY', evt_sbtyp =  'INTERCEPTION')
-away_rec_from_player = away_rec_From_To_players[0]
-
-away_pass_inter_frames, away_pass_From_To_players  = \
-    ext_event_frams_players( events = events, team = 'Away',evt_type = 'PASS')
-away_pass_from_player = away_rec_From_To_players[0]
-a = 1
+    script_dir = os.path.dirname(__file__)
+    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
 
 
-# +++ Configuration of the interseption event: 
-# ~ The 1st config of the event is: HOME_LOST w/ AWAY_REC
-# ~ The 2nd config of the event is: AWAY_LOST w/ HOME_REC
-# The event must be fed in this order: a team loses the ball where the other team recover it right away. 
-#  If this order is reversed (recovering then losign the ball) will take the end of the previous 
-# interseption with the begining of the current interseption (2 separate interseption instances mixed together).
+    tracking_home = mio.tracking_data(DATADIR,game_id,'Home')
+    tracking_home = mio.to_metric_coordinates(tracking_home)
+    # Away team: 
+    tracking_away = mio.tracking_data(DATADIR,game_id,'Away')
+    tracking_away = mio.to_metric_coordinates(tracking_away)
 
-#1st configuration: 
-Fst_confg_players = np.asarray([home_lost_from_player,away_rec_from_player]).T
-pass_confg_players = np.asarray([away_pass_From_To_players[0],away_pass_From_To_players[1]]).T
+        
 
-#2nd configuration :
-# Snd_confg_players = np.asarray([away_lost_from_player,home_rec_from_player]).T
+    events = mio.read_event_data(DATADIR,game_id)
+    events = mio.to_metric_coordinates(events)
+    home_lost_inter_frames, home_From_To_players  = \
+        ext_event_frams_players( events = events, team = 'Home',evt_type = 'BALL LOST', evt_sbtyp =  'INTERCEPTION')
+    home_lost_from_player = home_From_To_players[0]
+
+    away_rec_inter_frames, away_rec_From_To_players  = \
+        ext_event_frams_players( events = events, team = 'Away',evt_type = 'RECOVERY', evt_sbtyp =  'INTERCEPTION')
+    away_rec_from_player = away_rec_From_To_players[0]
+
+    away_pass_inter_frames, away_pass_From_To_players  = \
+        ext_event_frams_players( events = events, team = 'Away',evt_type = 'PASS')
+    away_pass_from_player = away_rec_From_To_players[0]
+    a = 1
+
+
+    # +++ Configuration of the interseption event: 
+    # ~ The 1st config of the event is: HOME_LOST w/ AWAY_REC
+    # ~ The 2nd config of the event is: AWAY_LOST w/ HOME_REC
+    # The event must be fed in this order: a team loses the ball where the other team recover it right away. 
+    #  If this order is reversed (recovering then losign the ball) will take the end of the previous 
+    # interseption with the begining of the current interseption (2 separate interseption instances mixed together).
+
+    #1st configuration: 
+    Fst_confg_players = np.asarray([home_lost_from_player,away_rec_from_player]).T
+    pass_confg_players = np.asarray([away_pass_From_To_players[0],away_pass_From_To_players[1]]).T
+
+    #2nd configuration :
+    # Snd_confg_players = np.asarray([away_lost_from_player,home_rec_from_player]).T
 
 
 
 
 
-# Extract the players and the ball trajectories of the corresponding event:   
-home_inter_trajs = []
-#TODO Create a structures of the trajectories: 
-# Accumulate the trajectories 
-data_pass = []
-for i,k in enumerate(away_pass_inter_frames):#enumerate(away_lost_inter_frames):
-    print(i)
-    print(k)
-    # from_player = Fst_confg_players[0][i]
-    # to_player = Fst_confg_players[1][i]
-    ip1 = np.random.randint(100)
-    ip2 = np.random.randint(100)
-    from_player = pass_confg_players[i][0]
-    to_player = pass_confg_players[i][1]
+    # Extract the players and the ball trajectories of the corresponding event:   
+    home_inter_trajs = []
+    #TODO Create a structures of the trajectories: 
+    # Accumulate the trajectories 
+    data_pass = []
+    for i,k in enumerate(away_pass_inter_frames):#enumerate(away_lost_inter_frames):
+        print(i)
+        print(k)
+        # from_player = Fst_confg_players[0][i]
+        # to_player = Fst_confg_players[1][i]
+        ip1 = np.random.randint(100)
+        ip2 = np.random.randint(100)
+        from_player = pass_confg_players[i][0]
+        to_player = pass_confg_players[i][1]
 
-    #Extracting the event trajectories for player-to-player-ball trajectories: 
-    plt_inst = False
-    # if i== 10: 
-    #     plt_inst = True
-    # else: 
-    #     plt_inst = False
-    tracking_home, tracking_away, home_trajs, away_trajs, ball_traj  = ext_teams_Traj(tracking_home = tracking_home , tracking_away = tracking_away,s_ind = k[0],e_ind = k[1],plt_inst=plt_inst)
-    # tracking_home, tracking_away, home_trajs, away_trajs, ball_traj  = ext_teams_Traj(s_ind = k[0],e_ind = k[1],plt_inst=plt_inst)
-    
-    # Pickling the trajectories to be used in the inference: 
-    player1_traj = away_trajs[0].T
-    player2_traj = away_trajs[1].T
-    ball1_traj = ball_traj.T
-    data_inst = [home_trajs,away_trajs,ball1_traj]
-    data_pass.append(data_inst)
-    
-    
-    a = 1 
-# saveData(dataAsList = data_pass,fileName ='Game2_AwayTeam_NegEx' ,enFlag=True)
-a = 1   
+        #Extracting the event trajectories for player-to-player-ball trajectories: 
+        plt_inst = False
+        # if i== 10: 
+        #     plt_inst = True
+        # else: 
+        #     plt_inst = False
+        tracking_home, tracking_away, home_trajs, away_trajs, ball_traj  = ext_teams_Traj(tracking_home = tracking_home , tracking_away = tracking_away,s_ind = k[0],e_ind = k[1],plt_inst=plt_inst)
+        # tracking_home, tracking_away, home_trajs, away_trajs, ball_traj  = ext_teams_Traj(s_ind = k[0],e_ind = k[1],plt_inst=plt_inst)
+        
+        # Pickling the trajectories to be used in the inference: 
+        player1_traj = away_trajs[0].T
+        player2_traj = away_trajs[1].T
+        ball1_traj = ball_traj.T
+        data_inst = [home_trajs,away_trajs,ball1_traj]
+        data_pass.append(data_inst)
+        
+        
+        a = 1 
+    # saveData(dataAsList = data_pass,fileName ='Game2_AwayTeam_NegEx' ,enFlag=True)
+ 
+
+if __name__ == '__main__':
+    main()

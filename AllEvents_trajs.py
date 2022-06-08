@@ -5,10 +5,14 @@ This script search for all possible events in the events dataset,
 and extract the corresponding trajectory for each event from the trajectory dataset.
 
 
-For each datapoint create a ['label','feature'] pairs, where the label is the event name
-and the feature = [(x_p1,y_p1,theta_p1,v_p1,teamA),.....,(x_p22,y_p22,theta_p22,v_p22,teamB),
-(x_ball,y_ball,theta_ball,v_ball,ball)]: 23 X 1 list of players and the ball trajectories and heading, where
-(x,y,theta,v,team_name): n X 5 trajectory matrix and the team name  
+For each datapoint create a ['Label','Feature'] pairs, where
+- Label = 'Team name'+'_'+'Event Type'+'_'+'event subtype if exists'
+- Feature = [[(x_p1,y_p1,speed_p1,heading_p1),...,(x_p11,y_p11,speed_p11,heading_p11)],
+[(x_p12,y_p12,speed_p12,heading_p12),...,(x_p22,y_p22,speed_p22,heading_p22)],[(x_ball,y_ball,theta_ball,v_ball,ball)]]: 
+23 X 1 list of players and the ball trajectories and heading, where
+(x,y,speed,v): n X 4 trajectory matrix. 
+
+
 
 """
 
@@ -23,6 +27,7 @@ import numpy as np
 import pickle
 import os
 import math
+import json
 
 
 def main():
@@ -31,7 +36,7 @@ def main():
     script_dir = os.path.dirname(__file__)
     DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
     # DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
-    game_id = 2 # let's look at sample match 2
+    game_id = 1 # let's look at sample match 2
 
     # read in the event data
     #---------------------------------------------------------------------------------------------------------------------------
@@ -60,7 +65,7 @@ def main():
     Subtype = events['Subtype']
     SFrame = events['Start Frame']
     EFrame = events['End Frame']
-    dataset  = []
+    dataset_game1  = []
     for (ev_team,ev_type,ev_subtype,ev_sframe,ev_eframe) in zip(Team,Type,Subtype,SFrame,EFrame): 
         # Event Label: 
         if type(ev_subtype) != 'str': 
@@ -100,8 +105,10 @@ def main():
         feature = [home_trajs,away_trajs,ball_traj]
         #Data point: 
         data_point = {'Label':ev_label,'Feature':feature}
-        dataset.append(data_point)
-    a = 1 
+        dataset_game1.append(data_point) 
+
+    saveData(dataAsList = dataset_game1,fileName ='dataset_game1' ,enFlag=True)
+    a = 1
 
 
 
@@ -118,6 +125,6 @@ def main():
 
 
 
-
 if __name__ == '__main__':
+    # a = json.open('dataset_game1.json')
     main()
