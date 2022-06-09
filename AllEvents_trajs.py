@@ -17,6 +17,7 @@ For each datapoint create a ['Label','Feature'] pairs, where
 
 """
 
+from cmath import nan
 from sympy import false
 from Metrica_IO import *
 from Metrica_EPV import *
@@ -35,7 +36,7 @@ def main():
     # Extract the names of all possible events: 
     # set up initial path to data
     script_dir = os.path.dirname(__file__)
-    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data/')
+    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
     # DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
     game_id = 1 # let's look at sample match 2
 
@@ -77,10 +78,10 @@ def main():
         else:
             ev_label =  ev_team+'_'+ev_type+'_'+ev_subtype
         # Event Players: 
-        if plyr1 is not None: 
-            ev_plyrs[0] = int(plyr1[7:])
-        if plyr2 is not None: 
-            ev_plyrs[1] = int(plyr2[7:])        
+        if type(plyr1) is str: 
+            ev_plyrs[0] = int(plyr1[6:])
+        if type(plyr2) is str: 
+            ev_plyrs[1] = int(plyr2[6:])        
         #Event feature: 
          # Home team
         home_trajs = [None]*11
@@ -116,7 +117,7 @@ def main():
         data_point = {'Label':ev_label, 'Event_plyrs':ev_plyrs,'Feature':feature}
         dataset_game1.append(data_point) 
 
-    # saveData(dataAsList = dataset_game1,fileName ='dataset_game1' ,enFlag=True)
+    saveData(dataAsList = dataset_game1,fileName ='dataset_game1_wps' ,enFlag=True)
     a = 1
 
 
