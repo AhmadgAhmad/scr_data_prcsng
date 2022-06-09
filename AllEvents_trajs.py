@@ -7,7 +7,7 @@ and extract the corresponding trajectory for each event from the trajectory data
 
 For each datapoint create a ['Label','Feature'] pairs, where
 - Label = 'Team name'+'_'+'Event Type'+'_'+'event subtype if exists'
-- plyr_ids = [plyr 1]
+- Event_plyrs = [plyr 1, plyr 2 (if exist)]
 - Feature = [[(x_p1,y_p1,speed_p1,heading_p1),...,(x_p11,y_p11,speed_p11,heading_p11)],
 [(x_p12,y_p12,speed_p12,heading_p12),...,(x_p22,y_p22,speed_p22,heading_p22)],[(x_ball,y_ball,theta_ball,v_ball,ball)]]: 
 23 X 1 list of players and the ball trajectories and heading, where
@@ -35,7 +35,7 @@ def main():
     # Extract the names of all possible events: 
     # set up initial path to data
     script_dir = os.path.dirname(__file__)
-    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
+    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data/')
     # DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
     game_id = 1 # let's look at sample match 2
 
@@ -66,13 +66,21 @@ def main():
     Subtype = events['Subtype']
     SFrame = events['Start Frame']
     EFrame = events['End Frame']
+    Plyr1 = events['From']
+    Plyr2 = events['To']
     dataset_game1  = []
-    for (ev_team,ev_type,ev_subtype,ev_sframe,ev_eframe) in zip(Team,Type,Subtype,SFrame,EFrame): 
+    for (ev_team,ev_type,ev_subtype,ev_sframe,ev_eframe,plyr1,plyr2) in zip(Team,Type,Subtype,SFrame,EFrame,Plyr1,Plyr2): 
+        ev_plyrs = [None,None]
         # Event Label: 
         if type(ev_subtype) != 'str': 
             ev_label =  ev_team+'_'+ev_type
         else:
             ev_label =  ev_team+'_'+ev_type+'_'+ev_subtype
+        # Event Players: 
+        if plyr1 is not None: 
+            ev_plyrs[0] = int(plyr1[7:])
+        if plyr2 is not None: 
+            ev_plyrs[1] = int(plyr2[7:])        
         #Event feature: 
          # Home team
         home_trajs = [None]*11
@@ -105,10 +113,10 @@ def main():
             
         feature = [home_trajs,away_trajs,ball_traj]
         #Data point: 
-        data_point = {'Label':ev_label,'Feature':feature}
+        data_point = {'Label':ev_label, 'Event_plyrs':ev_plyrs,'Feature':feature}
         dataset_game1.append(data_point) 
 
-    saveData(dataAsList = dataset_game1,fileName ='dataset_game1' ,enFlag=True)
+    # saveData(dataAsList = dataset_game1,fileName ='dataset_game1' ,enFlag=True)
     a = 1
 
 
