@@ -38,7 +38,7 @@ def main():
     script_dir = os.path.dirname(__file__)
     DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
     # DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
-    game_id = 1 # let's look at sample match 2
+    game_id = 2 # let's look at sample match 2
 
     # read in the event data
     #---------------------------------------------------------------------------------------------------------------------------
@@ -97,14 +97,14 @@ def main():
         for i,p_name in enumerate(Hp_names): #todo Fix: when returning the trajs with the correct label of each player
             #The trajectory of each player: 
             try:
-                home_trajs[i] = np.asarray([tracking_home['Home_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_x'%p_name].iloc[ev_sframe:ev_eframe],\
+                home_trajs[i] = np.asarray([tracking_home['Home_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
                 tracking_home['Home_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
             except:
                 raise('The provided player name is not from the home team.')
         
         for i,p_name in enumerate(Ap_names): 
             try: 
-                away_trajs[i] = np.asarray([tracking_away['Away_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_x'%p_name].iloc[ev_sframe:ev_eframe],\
+                away_trajs[i] = np.asarray([tracking_away['Away_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
                 tracking_away['Away_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
             except:
                 raise('The provided player name is not from the away team.')
@@ -117,7 +117,7 @@ def main():
         data_point = {'Label':ev_label, 'Event_plyrs':ev_plyrs,'Feature':feature}
         dataset_game1.append(data_point) 
 
-    saveData(dataAsList = dataset_game1,fileName ='dataset_game1_wps' ,enFlag=True)
+    saveData(dataAsList = dataset_game1,fileName ='dataset_game2_wps' ,enFlag=True)
     a = 1
 
 
