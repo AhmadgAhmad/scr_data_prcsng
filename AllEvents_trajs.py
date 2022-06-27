@@ -54,9 +54,15 @@ def main():
     tracking_away = mio.to_metric_coordinates(tracking_away)
     # reverse direction of play in the second half so that home team is always attacking from right->left
     tracking_home,tracking_away,events = mio.to_single_playing_direction(tracking_home,tracking_away,events)
+    
     # Calculate player velocities and headings 
     tracking_home = mvel.calc_player_velocities_heading(tracking_home,smoothing=True)
     tracking_away = mvel.calc_player_velocities_heading(tracking_away,smoothing=True)
+
+    # Calculate player x-velocity and y-velocity and use each one in the image channel [to mitigate the discontinuity of mapping the angle to the line]. 
+
+
+
     #------------------------------------------------------------------------------------------------------------------------
 
     
@@ -97,20 +103,27 @@ def main():
         for i,p_name in enumerate(Hp_names): #todo Fix: when returning the trajs with the correct label of each player
             #The trajectory of each player: 
             try:
+                # home_trajs[i] = np.asarray([tracking_home['Home_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
+                # tracking_home['Home_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
                 home_trajs[i] = np.asarray([tracking_home['Home_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
-                tracking_home['Home_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
+                tracking_home['Home_%d_vx'%p_name].iloc[ev_sframe:ev_eframe], tracking_home['Home_%d_vy'%p_name].iloc[ev_sframe:ev_eframe]]).T
+
             except:
                 raise('The provided player name is not from the home team.')
         
         for i,p_name in enumerate(Ap_names): 
             try: 
+                # away_trajs[i] = np.asarray([tracking_away['Away_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
+                # tracking_away['Away_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
                 away_trajs[i] = np.asarray([tracking_away['Away_%d_x'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_y'%p_name].iloc[ev_sframe:ev_eframe],\
-                tracking_away['Away_%d_speed'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_heading'%p_name].iloc[ev_sframe:ev_eframe]]).T
+                tracking_away['Away_%d_vx'%p_name].iloc[ev_sframe:ev_eframe], tracking_away['Away_%d_vy'%p_name].iloc[ev_sframe:ev_eframe]]).T
             except:
                 raise('The provided player name is not from the away team.')
 
+        # ball_traj = np.asarray([tracking_away['ball_x'].iloc[ev_sframe:ev_eframe], tracking_away['ball_y'].iloc[ev_sframe:ev_eframe]\
+        #     ,tracking_away['ball_speed'].iloc[ev_sframe:ev_eframe], tracking_away['ball_heading'].iloc[ev_sframe:ev_eframe]]).T
         ball_traj = np.asarray([tracking_away['ball_x'].iloc[ev_sframe:ev_eframe], tracking_away['ball_y'].iloc[ev_sframe:ev_eframe]\
-            ,tracking_away['ball_speed'].iloc[ev_sframe:ev_eframe], tracking_away['ball_heading'].iloc[ev_sframe:ev_eframe]]).T 
+            ,tracking_away['ball_vx'].iloc[ev_sframe:ev_eframe], tracking_away['ball_vy'].iloc[ev_sframe:ev_eframe]]).T 
             
         feature = [home_trajs,away_trajs,ball_traj]
         #Data point: 
