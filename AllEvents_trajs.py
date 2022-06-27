@@ -36,7 +36,7 @@ def main():
     # Extract the names of all possible events: 
     # set up initial path to data
     script_dir = os.path.dirname(__file__)
-    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data\\')
+    DATADIR = os.path.join(script_dir, 'Eevnts_Trajs_data/')
     # DATADIR = 'C:/Users/ahmad/Documents/Graduate_study/PhD_work/First_Fall-2021/TLI/MAESTRO_group_inferring/MetrcaSport_data/sample-data-master/data'
     game_id = 2 # let's look at sample match 2
 
